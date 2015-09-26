@@ -1,0 +1,6 @@
+# Import non-base functions from standard packages
+importFrom("stats", "pchisq", "pt")
+importFrom("utils", "data", "tail")
+
+# # Export all names
+exportPattern(".")

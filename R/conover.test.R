@@ -1,4 +1,4 @@
-# version 1.1.1 January 6, 2016 by alexis.dinno@pdx.edu
+# version 1.1.2 February 8, 2017 by alexis.dinno@pdx.edu
 # perform Conover-Iman test of multiple comparisons using rank sums
 
 p.adjustment.methods <- c("none","bonferroni","sidak","holm","hs","hochberg","bh","by")
@@ -517,7 +517,7 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
   if (table==TRUE) {
     # Need to determine how many tables (reps) to output
     reps      <- floor((k-1)/6)
-    laststart <- k - (reps*6) + 1
+    laststart <- (reps*6) + 1
     kminusone <- k - 1
     if (label==FALSE) {
       g <- as.numeric(g)
@@ -550,12 +550,13 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
           conovertestheader(g,laststart,kminusone,rmc)
           # Table body
           for (i in (laststart+1):k) {
-            conovertestttable(g,i,Tvalues,laststart,kminusone) 
+          	colstop <- i-1
+            conovertestttable(g,i,Tvalues,laststart, colstop) 
             if (i < k) {
-              conovertestptable(i,P.adjust,laststart,kminusone,Reject,0)
+              conovertestptable(i,P.adjust,laststart, colstop,Reject,0)
               }
              else {
-              conovertestptable(i,P.adjust,laststart,kminusone,Reject,1)
+              conovertestptable(i,P.adjust,laststart, colstop,Reject,1)
               }
             }
           }

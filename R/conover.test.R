@@ -1,4 +1,4 @@
-# version 1.1.2 February 8, 2017 by alexis.dinno@pdx.edu
+# version 1.1.3 April 1, 2017 by alexis.dinno@pdx.edu
 # perform Conover-Iman test of multiple comparisons using rank sums
 
 p.adjustment.methods <- c("none","bonferroni","sidak","holm","hs","hochberg","bh","by")
@@ -33,10 +33,6 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
       return(ties)
       }
 
-    if (pass == 1) {
-#      x <- x[[1]]
-      }
-  
     #set up data by lists
     if (is.list(x)) {
       N <- 0
@@ -55,7 +51,6 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
         }
       Data[,2] <- obs
       if (length(g) > 1) {
-#        Data[,3] <- as.integer(factor(g))
         Data[,3] <- g
         }
        else {
@@ -66,7 +61,6 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
   
     #set up data by groups
     if (!is.list(x)) {
-#      g <- as.integer(factor(g))
       N <- length(x)
       Data <- matrix(NA,length(x),4)
       Data[,1] <- 1:length(x)
@@ -233,6 +227,13 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
       cat("         |\n") 
       }
     }
+    
+  # alphabetize.factor: alphabetizes a factor
+  # this is very quick and dirty with no checking.
+  alphabetize.factor <- function(x) {
+    return(factor(sort(c(as.character(x)))))
+    }
+
 
   # VALIDATIONS & PREPARATIONS
   # names for output
@@ -248,18 +249,18 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
         glevels <- levels(g)
         }
        else {
-        glevels <- unique(g)
+       	g <- factor(g)
+        glevels <- levels(g)
         }
       }
      else {
       glevels <- names(table(addNA(g, ifany = TRUE)))
       }
-    Data <- data.frame(cbind(x,g))
+    Data <- data.frame(x,g)[order(levels(g)[c(g)]),]
     Data <- Data[!is.na(unlist(Data$x)),]
     Data <- Data[!is.na(Data$g),]
-    x <- as.numeric(factor(Data$x))
-    g <- factor(Data$g)
-    levels(g) <- glevels
+    x <- Data[,1]
+	g <- alphabetize.factor(Data$g)
     }
    else {
      g <- c()
@@ -598,11 +599,14 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     cat("\n")
     }
 
-  # Output pairwise comparisons as list if requested.
+  # Output pairwise comparisons as a list if requested.
   if (list==TRUE) {
     groupvalues  <- levels(factor(g))
-    stringlength <- 2*max(nchar(groupvalues)) + 4
-    
+    # get the lengths of each group name (whether explicitly labeled or not)
+    sort(unlist(lapply(groupvalues,nchar))) -> lengths
+    # stringlength will be the sum of the two largest values in lengths plus 6
+    stringlength <- lengths[length(lengths)] + lengths[length(lengths)-1] + 6
+
     # Output list header
     cat("\nList of pairwise comparisons: t (p-value)")
     cat("\n---------------------------------------------------\n")

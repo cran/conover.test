@@ -28,7 +28,7 @@ p.adjustment.methods
 }
 \details{\code{conover.test} computes the Conover-Iman test (Conover and Iman, 1979; Conover, 1999) for stochastic dominance and reports the results among multiple pairwise comparisons after a Kruskal-Wallis test for stochastic dominance among \emph{k} groups (Kruskal and Wallis, 1952).  Pairwise comparison using the Conover-Iman test is valid if and only if the corresponding Kruskal-Wallis null hypothesis is rejected, but is strictly more powerful than Dunn's (1964) \emph{post hoc} multiple comparisons test.  The interpretation of stochastic dominance requires an assumption that the \acronym{CDF} of one group does not cross the \acronym{CDF} of the other.  \code{conover.test} makes \emph{m} = \emph{k}(\emph{k}-1)/2 multiple pairwise comparisons based on the Conover-Iman \emph{t}-test-statistic for the rank-sum differences.  The null hypothesis for each pairwise comparison is that the probability of observing a randomly selected value from the first group that is larger than a randomly selected value from the second group equals one half; this null hypothesis corresponds to that of the Wilcoxon-Mann-Whitney rank-sum test.  Like the rank-sum test, if the data can be assumed to be continuous, and the distributions are assumed identical except for a difference in location, the Conover-Iman test may be understood as a test for median difference.  \code{conover.test} accounts for tied ranks.
 
-\code{conover.test} outputs both \emph{t}-test-statistics for each pairwise comparison and the \emph{p}-value = P(\emph{T}>|\emph{t}|) for each.
+\code{conover.test} outputs both \emph{t}-test-statistics for each pairwise comparison and the \emph{p}-value = P(\emph{T} \eqn{\ge} |\emph{t}|) for each, so one would reject Ho if \emph{p} \eqn{\le} \eqn{\alpha}/2. IMPORTANT NOTE: the \emph{p}-values just described are sometimes called "one-sided," (i.e. you get "two-sided" \emph{p}-values by multiplying the one-sided \emph{p}-values by two; notice that \emph{p} \eqn{\le} \eqn{\alpha}/2 and 2\emph{p} \eqn{\le} \eqn{\alpha} are equivalent rejection decisions).
 
 Several options are available to adjust \emph{p}-values for multiple comparisons, including methods to control the family-wise error rate (\acronym{FWER}) and methods to control the false discovery rate (\acronym{FDR}):
 
@@ -62,25 +62,25 @@ Because the sequential step-up/step-down tests rejection decisions depend on bot
 Alexis Dinno (\email{alexis.dinno@pdx.edu})
 }
 \references{
-Benjamini, Y. and Hochberg, Y.  1995.  \dQuote{Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing.} \emph{Journal of the Royal Statistical Society.  Series B (Methodological)}.  57: 289--300.  
+Benjamini, Y. and Hochberg, Y.  (1995)  Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing. \emph{Journal of the Royal Statistical Society.  Series B (Methodological)}.  \bold{57}, 289--300.  
 
-Benjamini, Y.  and Yekutieli, D.  2001.  \dQuote{The control of the false discovery rate in multiple testing under dependency.} \emph{Annals of Statistics}.  29: 1165--1188.  
+Benjamini, Y.  and Yekutieli, D.  (2001)  The control of the false discovery rate in multiple testing under dependency. \emph{Annals of Statistics}.  \bold{29}, 1165--1188.  
 
-Conover, W. J. and Iman, R. L. (1979).  \dQuote{On multiple-comparisons procedures.}  Technical Report LA-7677-MS, Los Alamos Scientific Laboratory.
+Conover, W. J. and Iman, R. L. (1979)  On multiple-comparisons procedures.  Technical Report LA-7677-MS, Los Alamos Scientific Laboratory.
 
 Conover, W. J. (1999) \emph{Practical Nonparametric Statistics.}  Wiley, Hoboken, NJ. 3rd edition.
  
-Dunn, O.  J.  1961.  \dQuote{Multiple comparisons among means.}  \emph{Journal of the American Statistical Association}.  56: 52--64.  
+Dunn, O.  J.  (1961)  Multiple comparisons among means.  \emph{Journal of the American Statistical Association}.  \bold{56}, 52--64.  
 
-Dunn, O.  J.  1964.  \dQuote{Multiple comparisons using rank sums}.  \emph{Technometrics}.  6: 241--252.  
+Dunn, O.  J.  (1964)  Multiple comparisons using rank sums.  \emph{Technometrics}.  \bold{6}, 241--252.  
 
-Hochberg, Y.  1988.  \dQuote{A sharper Bonferroni procedure for multiple tests of significance}.  \emph{Biometrika}.  75:800--802.  
+Hochberg, Y.  (1988)  A sharper Bonferroni procedure for multiple tests of significance.  \emph{Biometrika}.  \bold{75}, 800--802.  
 
-Holm, S.  1979.  \dQuote{A simple sequentially rejective multiple test procedure}.  \emph{Scandinavian Journal of Statistics}.  6: 65--70.  
+Holm, S.  (1979)  A simple sequentially rejective multiple test procedure.  \emph{Scandinavian Journal of Statistics}.  \bold{6}, 65--70.  
 
-Kruskal, W.  H. and Wallis, A.  1952.  \dQuote{Use of ranks in one-criterion variance analysis}.  \emph{Journal of the American Statistical Association}.  47: 583--621.  
+Kruskal, W.  H. and Wallis, A.  (1952)  Use of ranks in one-criterion variance analysis.  \emph{Journal of the American Statistical Association}.  \bold{47}, 583--621.  
 
-\enc{Šidák}{Sidak}, Z.  1967.  \dQuote{Rectangular confidence regions for the means of multivariate normal distributions}.  \emph{Journal of the American Statistical Association}.  62: 626--633.  
+\enc{Šidák}{Sidak}, Z.  (1967)  Rectangular confidence regions for the means of multivariate normal distributions.  \emph{Journal of the American Statistical Association}.  \bold{62}, 626--633.  
 }
 \examples{
 ## Example cribbed and modified from the kruskal.test documentation

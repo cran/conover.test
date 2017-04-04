@@ -1,4 +1,4 @@
-# version 1.1.3 April 1, 2017 by alexis.dinno@pdx.edu
+# version 1.1.4 April 4, 2017 by alexis.dinno@pdx.edu
 # perform Conover-Iman test of multiple comparisons using rank sums
 
 p.adjustment.methods <- c("none","bonferroni","sidak","holm","hs","hochberg","bh","by")
@@ -603,24 +603,37 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
   if (list==TRUE) {
     groupvalues  <- levels(factor(g))
     # get the lengths of each group name (whether explicitly labeled or not)
-    sort(unlist(lapply(groupvalues,nchar))) -> lengths
+    lengths <- sort(unlist(lapply(groupvalues,nchar)))
     # stringlength will be the sum of the two largest values in lengths plus 6
     stringlength <- lengths[length(lengths)] + lengths[length(lengths)-1] + 6
 
     # Output list header
-    cat("\nList of pairwise comparisons: t (p-value)")
-    cat("\n---------------------------------------------------\n")
+    if (tolower(method)=="none") {
+      cat("\nList of pairwise comparisons: t statistic (p-value)\n")
+      }
+     else {
+      cat("\nList of pairwise comparisons: t statistic (adjusted p-value)\n")
+      }
+    cat(paste0(rep("-",stringlength+18+max(Reject)),collapse=""))
+    cat("\n")
     index <- 0
     for (i in 2:k) {
       for (j in 1:(i-1)) {
         index <- index + 1
-          buffer <- stringlength - (nchar(groupvalues[i]) + nchar(groupvalues[j]) + 4) - 2
+          buffer <- max(stringlength - (nchar(groupvalues[i]) + nchar(groupvalues[j]) + 4) - 2,0)
+          if ( Reject[index] == 0) {
+            pformatted <- paste0("(",pformat(P.adjust[index]),")",sep="")
+            }
+           else {
+           	pformatted <- paste0("(",pformat(P.adjust[index]),")","*",sep="")
+           	}
         if (rmc==FALSE) {
-          cat(groupvalues[j]," - ",groupvalues[i],paste(rep(" ",buffer))," :\t",tformat(Tvalues[index]), " (",pformat(P.adjust[index]),")\n", sep="")
+          cat(groupvalues[j]," - ",groupvalues[i],paste(rep(" ",buffer))," : ",tformat(Tvalues[index]), " ",pformatted,"\n", sep="")
           }
         if (rmc==TRUE) {
-          cat(groupvalues[i]," - ",groupvalues[j],paste(rep(" ",buffer))," :\t",tformat(Tvalues[index]), " (",pformat(P.adjust[index]),")\n", sep="")
+          cat(groupvalues[i]," - ",groupvalues[j],paste(rep(" ",buffer))," : ",tformat(Tvalues[index]), " ",pformatted,"\n", sep="")
           }
+
         }
       }
     cat("\n")

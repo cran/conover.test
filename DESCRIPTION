@@ -1,6 +1,6 @@
 Package: conover.test
-Version: 1.1.4
-Date: 2017-04-04
+Version: 1.1.5
+Date: 2017-10-28
 Title: Conover-Iman Test of Multiple Comparisons Using Rank Sums
 Author: Alexis Dinno <alexis.dinno@pdx.edu>
 Maintainer: Alexis Dinno <alexis.dinno@pdx.edu>
@@ -9,6 +9,6 @@ License: GPL-2
 LazyData: no
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2017-04-04 16:00:32 UTC; Alexis
+Packaged: 2017-10-30 19:13:36 UTC; Alexis
 Repository: CRAN
-Date/Publication: 2017-04-04 22:04:30 UTC
+Date/Publication: 2017-10-30 19:59:17 UTC

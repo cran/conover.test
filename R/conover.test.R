@@ -1,9 +1,9 @@
-# version 1.1.4 April 4, 2017 by alexis.dinno@pdx.edu
+# version 1.1.5 October 28, 2017 by alexis.dinno@pdx.edu
 # perform Conover-Iman test of multiple comparisons using rank sums
 
 p.adjustment.methods <- c("none","bonferroni","sidak","holm","hs","hochberg","bh","by")
 
-conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label=TRUE, wrap=FALSE, table=TRUE, list=FALSE, rmc=FALSE, alpha=0.05) {
+conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label=TRUE, wrap=FALSE, table=TRUE, list=FALSE, rmc=FALSE, alpha=0.05, altp=FALSE) {
 
   # FUNCTIONS
 
@@ -388,23 +388,54 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
       }
 
   # Calculate p-values for t statistics, and adjust as needed
-  P <- pt(q=abs(Tvalues), df=nu, lower.tail=FALSE)
+  # If p = P(T >= |t|)
+  if (altp==FALSE) {
+    P <- pt(q=abs(Tvalues), df=nu, lower.tail=FALSE)
+    }
+   # Otherwise, if p = P(|T| >= |t|)
+   else {
+    P <- 2*pt(q=abs(Tvalues), df=nu, lower.tail=FALSE)
+   	}
   
   #calculate adjusted p-values based on method argument
   Reject <- rep(0,m)
   # No adjustment for multiple comparisons
   if (tolower(c(method))=="none") {
     P.adjust <- P
+    # If p = P(T >= |t|)
+    if (altp==FALSE) {
+      Reject <- P.adjust <= alpha/2
+      }
+     # Otherwise, if p= P(|T| >= |t|)
+     else {
+      Reject <- P.adjust <= alpha
+      }
     }
 
   # Control FWER using (Dunn's) Bonferroni
   if (tolower(c(method))=="bonferroni") {
     P.adjust <- pmin(1,P*m)
+    # If p = P(T >= |t|)
+    if (altp==FALSE) {
+      Reject <- P.adjust <= alpha/2
+      }
+     # Otherwise, if p= P(|T| >= |t|)
+     else {
+      Reject <- P.adjust <= alpha
+      }
     }
 
   # Control FWER using Šidák
   if (tolower(c(method))=="sidak") {
     P.adjust <- pmin(1,1 - (1-P)^m)
+    # If p = P(T >= |t|)
+    if (altp==FALSE) {
+      Reject <- P.adjust <= alpha/2
+      }
+     # Otherwise, if p= P(|T| >= |t|)
+     else {
+      Reject <- P.adjust <= alpha
+      }
     }
 
   # Control FWER using Holm(-Bonferroni)
@@ -414,12 +445,24 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     for (i in 1:m) {
       adjust <- m+1-i
       Psort[1,i] <- pmin(1,Psort[1,i]*adjust)
-      if (i==1) {
-        Psort[3,i] <- Psort[1,i] <= alpha/2
+      # If p = P(T >= |t|)
+      if (altp==FALSE) {
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha/2
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha/2) & Psort[3,i-1] != 0)
+          }
         }
+       # Otherwise, if p = P(|T| >= |t|)
        else {
-         Psort[3,i] <- ((Psort[1,i] <= alpha/2) & Psort[3,i-1] != 0)
-         }
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha) & Psort[3,i-1] != 0)
+          }
+        }
       }
     Psort <- Psort[,order(Psort[2,])]
     P.adjust <- Psort[1,]
@@ -433,12 +476,24 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     for (i in 1:m) {
       adjust <- m+1-i
       Psort[1,i] <- pmin(1,(1 - ((1 - Psort[1,i])^adjust)))
-      if (i==1) {
-        Psort[3,i] <- Psort[1,i] <= alpha/2
+      # If p = P(T >= |t|)
+      if (altp==FALSE) {
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha/2
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha/2) & Psort[3,i-1] != 0)
+          }
         }
+       # Otherwise, if p = P(|T| >= |t|)
        else {
-         Psort[3,i] <- ((Psort[1,i] <= alpha/2) & Psort[3,i-1] != 0)
-         }
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha) & Psort[3,i-1] != 0)
+          }
+        }
       }
     Psort <- Psort[,order(Psort[2,])]
     P.adjust <- Psort[1,]
@@ -452,12 +507,24 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     for (i in 1:m) {
       adjust <- i
       Psort[1,i] <- min(1,Psort[1,i]*adjust)
-      if (i==1) {
-        Psort[3,i] <- Psort[1,i] <= alpha/2
+      # If p = P(T >= |t|)
+      if (altp==FALSE) {
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha/2
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
+          }
         }
+       # Otherwise, if p = P(|T| >= |t|)
        else {
-         Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
-         }
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha) | Psort[3,i-1] == 1)
+          }
+        }
       }
     Psort <- Psort[,order(Psort[2,])]
     P.adjust <- Psort[1,]
@@ -471,12 +538,24 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     for (i in 1:m) {
       adjust <- (m/(m+1-i))
       Psort[1,i] <- min(1,Psort[1,i]*adjust)
-      if (i==1) {
-        Psort[3,i] <- Psort[1,i] <= alpha/2
+      # If p = P(T >= |t|)
+      if (altp==FALSE) {
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha/2
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
+          }
         }
+       # Otherwise, if p = P(|T| >= |t|)
        else {
-         Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
-         }
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha) | Psort[3,i-1] == 1)
+          }
+        }
       }
     Psort <- Psort[,order(Psort[2,])]
     P.adjust <- Psort[1,]
@@ -490,12 +569,24 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     for (i in 1:m) {
       adjust <- (m/(m+1-i))*sum(1/(1:m))
       Psort[1,i] <- min(1,Psort[1,i]*adjust)
-      if (i==1) {
-        Psort[3,i] <- Psort[1,i] <= (alpha/2) # reverse sorted, so m-i+1, rather than i
+      # If p = P(T >= |t|)
+      if (altp==FALSE) {
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha/2 # reverse sorted, so m-i+1, rather than i
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
+          }
         }
+       # Otherwise, if p = P(|T| >= |t|)
        else {
-         Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
-         }
+        if (i==1) {
+          Psort[3,i] <- Psort[1,i] <= alpha
+          }
+         else {
+          Psort[3,i] <- ((Psort[1,i] <= alpha) | Psort[3,i-1] == 1)
+          }
+        }
       }
     Psort <- Psort[,order(Psort[2,])]
     P.adjust <- Psort[1,]
@@ -639,6 +730,16 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     cat("\n")
     }
 
+  cat("alpha = ",alpha,"\n",sep="")
+  # If p = P(T <= |t|)
+  if (altp==FALSE) {
+    cat("Reject Ho if p <= alpha/2\n")
+    }
+   # Otherwise, if p = P(|T| <= |t|)
+   else {
+    cat("Reject Ho if p <= alpha\n")
+    }
+
   # Create comparisons variable for returned values (whether the list option
   # is TRUE or FALSE
   comparisons <- rep(NA,(k*(k-1)/2))
@@ -656,5 +757,13 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
       }
     }
    
-  invisible(list(chi2=chi2,T=Tvalues,P=P,P.adjusted=P.adjust,comparisons=comparisons))
+  # If p = P(T <= |t|)
+  if (altp==FALSE) {
+   invisible(list(chi2=chi2, T=Tvalues, P=P, P.adjusted=P.adjust, comparisons=comparisons))
+   }
+   # Otherwise, if p = P(|T| <= |t|)
+   else {
+   invisible(list(chi2=chi2, T=Tvalues, altP=P, altP.adjusted=P.adjust, comparisons=comparisons))
+   }
+  
   }

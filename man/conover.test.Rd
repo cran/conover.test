@@ -27,7 +27,7 @@ p.adjustment.methods
  \item{alpha}{the nominal level of significance used in the step-up/step-down multiple comparisons procedures (Holm, Holm-\enc{Šidák}{Sidak}, Hochberg, Benjamini-Hochberg, and Benjamini-Yekutieli).}
  \item{altp}{if \option{TRUE} then express \emph{p}-values in alternative format.  The default is to express \emph{p}-value = P(\emph{T} \eqn{\ge} |\emph{t}|), and reject Ho if \emph{p} \eqn{\le} \eqn{\alpha}/2.  When the \code{altp} option is used, \emph{p}-values are instead expressed as \emph{p}-value = P(|\emph{T}| \eqn{\ge} |\emph{t}|), and reject Ho if \emph{p} \eqn{\le} \eqn{\alpha}.  \strong{These two expressions give identical test results.} Use of \code{altp} is therefore merely a semantic choice.}
 }
-\details{\code{conover.test} computes the Conover-Iman test (Conover and Iman, 1979; Conover, 1999) for stochastic dominance and reports the results among multiple pairwise comparisons after a Kruskal-Wallis test for stochastic dominance among \emph{k} groups (Kruskal and Wallis, 1952).  Pairwise comparison using the Conover-Iman test is valid if and only if the corresponding Kruskal-Wallis null hypothesis is rejected, but is strictly more powerful than Dunn's (1964) \emph{post hoc} multiple comparisons test.  The interpretation of stochastic dominance requires an assumption that the \acronym{CDF} of one group does not cross the \acronym{CDF} of the other.  \code{conover.test} makes \emph{m} = \emph{k}(\emph{k}-1)/2 multiple pairwise comparisons based on the Conover-Iman \emph{t}-test-statistic for the rank-sum differences.  The null hypothesis for each pairwise comparison is that the probability of observing a randomly selected value from the first group that is larger than a randomly selected value from the second group equals one half; this null hypothesis corresponds to that of the Wilcoxon-Mann-Whitney rank-sum test.  Like the rank-sum test, if the data can be assumed to be continuous, and the distributions are assumed identical except for a difference in location, the Conover-Iman test may be understood as a test for median difference.  \code{conover.test} accounts for tied ranks.
+\details{\code{conover.test} computes the Conover-Iman test (Conover and Iman, 1979; Conover, 1999) for 0th-order stochastic dominance and reports the results among multiple pairwise comparisons after a Kruskal-Wallis omnibus test for 0th-order stochastic dominance among \emph{k} groups (Kruskal and Wallis, 1952).  Pairwise comparison using the Conover-Iman test is valid if and only if the corresponding Kruskal-Wallis null hypothesis is rejected, but is strictly more powerful than Dunn's (1964) \emph{post hoc} multiple comparisons test.  \code{conover.test} makes \emph{m} = \emph{k}(\emph{k}-1)/2 multiple pairwise comparisons based on the Conover-Iman \emph{t}-test-statistic for the rank-sum differences.  The null hypothesis for each pairwise comparison is that the probability of observing a randomly selected value from the first group that is larger than a randomly selected value from the second group equals one half; this null hypothesis corresponds to that of the Wilcoxon-Mann-Whitney rank-sum test.  Like the rank-sum test, if the data can be assumed to be continuous, and the distributions are assumed identical except for a difference in location, the Conover-Iman test may be understood as a test for median difference and for mean difference.  \code{conover.test} accounts for tied ranks.
 
 \code{conover.test} outputs both \emph{z}-test-statistics for each pairwise comparison and the \emph{p}-value = P(\emph{T} \eqn{\ge} |\emph{t}|) for each. Reject Ho based on \emph{p} \eqn{\le} \eqn{\alpha}/2 (and in combination with \emph{p}-value ordering for stepwise \code{method} options).  If you prefer to work with \emph{p}-values expressed as \emph{p}-value = P(|\emph{T}| \eqn{\ge} |\emph{t}|) use the \code{altp=TRUE} option, and reject Ho based on \emph{p} \eqn{\le} \eqn{\alpha} (and in combination with \emph{p}-value ordering for stepwise \code{method} options).  These are exactly equivalent rejection decisions.
 
@@ -63,7 +63,7 @@ Several options are available to adjust \emph{p}-values for multiple comparisons
 \tab \emph{p}-values = max[1, \emph{pm}/(\emph{m}+1-\emph{i})], where \emph{i} indexes the ordering.  All tests after and \cr
 \tab including the first to be rejected are also rejected.\cr\cr
 \option{by}\tab the \acronym{FDR} is controlled using the Benjamini-Yekutieli adjustment (2011), a step-\cr
-\tab down procedure appropriate to depenent tests.  \emph{p}-values are ordered from largest to \cr
+\tab down procedure appropriate to dependent tests.  \emph{p}-values are ordered from largest to \cr
 \tab smallest, and adjusted \emph{p}-values = max[1, \emph{pmC}/(\emph{m}+1-\emph{i})], where \emph{i} indexes the \cr
 \tab ordering, and the constant \emph{C} = 1 + 1/2 + .  .  .  + 1/\emph{m}.  All tests after and including the \cr
 \tab first to be rejected are also rejected.\cr
@@ -89,25 +89,25 @@ Please contact me with any questions, bug reports or suggestions for improvement
 }
 }
 \references{
-Benjamini, Y. and Hochberg, Y.  (1995)  \href{https://www.jstor.org/stable/2346101}{Controlling the false discovery rate: A practical and powerful approach to multiple testing}. \emph{Journal of the Royal Statistical Society.  Series B (Methodological)}.  \bold{57}, 289--300.  
+Benjamini, Y. and Hochberg, Y.  (1995)  Controlling the false discovery rate: A practical and powerful approach to multiple testing. \emph{Journal of the Royal Statistical Society.  Series B (Methodological)}.  \bold{57}, 289--300.  <\doi{10.1111/j.2517-6161.1995.tb02031.x}>.
 
-Benjamini, Y.  and Yekutieli, D.  (2001)  \href{https://www.jstor.org/stable/2674075}{The control of the false discovery rate in multiple testing under dependency}. \emph{Annals of Statistics}.  \bold{29}, 1165--1188.  
+Benjamini, Y.  and Yekutieli, D.  (2001)  The control of the false discovery rate in multiple testing under dependency. \emph{Annals of Statistics}.  \bold{29}, 1165--1188.  <\doi{10.1214/aos/1013699998}>.
 
-Conover, W. J. and Iman, R. L. (1979)  \href{http://permalink.lanl.gov/object/tr?what=info:lanl-repo/lareport/LA-07677-MS}{On multiple-comparisons procedures}.  Technical Report LA-7677-MS, Los Alamos Scientific Laboratory.
+Conover, W. J. and Iman, R. L. (1979)  On multiple-comparisons procedures.  Technical Report LA-7677-MS, Los Alamos Scientific Laboratory.  <\doi{10.2172/6057803}>.
 
-Conover, W. J. (1999) \emph{Practical Nonparametric Statistics.}  Wiley, Hoboken, NJ. 3rd edition.
+Conover, W. J. (1999) \href{https://www.wiley.com/en-us/Practical+Nonparametric+Statistics,+3rd+Edition-p-9780471160687}{\emph{Practical Nonparametric Statistics}}.  Wiley, Hoboken, NJ. 3rd edition.
 
-Dunn, O.  J.  (1961)  \href{https://sci-hub.io}{Multiple comparisons among means}.  \emph{Journal of the American Statistical Association}.  \bold{56}, 52--64.  
+Dunn, O.  J.  (1961)  Multiple comparisons among means.  \emph{Journal of the American Statistical Association}.  \bold{56}, 52--64.  <\doi{10.1080/01621459.1961.10482090}>.
 
-Dunn, O.  J.  (1964)  \href{https://sci-hub.io}{Multiple comparisons using rank sums}.  \emph{Technometrics}.  \bold{6}, 241--252.  
+Dunn, O.  J.  (1964)  Multiple comparisons using rank sums.  \emph{Technometrics}.  \bold{6}, 241--252.  <\doi{10.1080/00401706.1964.10490181}>.
 
-Hochberg, Y.  (1988)  \href{https://sci-hub.io}{A sharper Bonferroni procedure for multiple tests of significance}.  \emph{Biometrika}.  \bold{75}, 800--802.  
+Hochberg, Y.  (1988)  A sharper Bonferroni procedure for multiple tests of significance.  \emph{Biometrika}.  \bold{75}, 800--802.  <\doi{10.1093/biomet/75.4.800}>.
 
-Holm, S.  (1979)  \href{https://www.jstor.org/stable/4615733}{A simple sequentially rejective multiple test procedure}.  \emph{Scandinavian Journal of Statistics}.  \bold{6}, 65--70.  
+Holm, S.  (1979)  \href{https://www.jstor.org/stable/4615733}{A simple sequentially rejective multiple test procedure}.  \emph{Scandinavian Journal of Statistics}.  \bold{6}, 65--70.
 
-Kruskal, W.  H. and Wallis, A.  (1952)  \href{https://sci-hub.io}{Use of ranks in one-criterion variance analysis}.  \emph{Journal of the American Statistical Association}.  \bold{47}, 583--621.  
+Kruskal, W.  H. and Wallis, A.  (1952)  Use of ranks in one-criterion variance analysis.  \emph{Journal of the American Statistical Association}.  \bold{47}, 583--621.  <\doi{10.1080/01621459.1952.10483441}>.
 
-\enc{Šidák}{Sidak}, Z.  (1967)  \href{https://sci-hub.io}{Rectangular confidence regions for the means of multivariate normal distributions}.  \emph{Journal of the American Statistical Association}.  \bold{62}, 626--633.  
+\enc{Šidák}{Sidak}, Z.  (1967)  Rectangular confidence regions for the means of multivariate normal distributions.  \emph{Journal of the American Statistical Association}.  \bold{62}, 626--633.  <\doi{10.1080/01621459.1967.10482935}>.
 }
 \examples{
 ## Example cribbed and modified from the kruskal.test documentation

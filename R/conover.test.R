@@ -1,5 +1,5 @@
-# version 1.1.5 October 28, 2017 by alexis.dinno@pdx.edu
-# perform Conover-Iman test of multiple comparisons using rank sums
+  # version 1.1.6 April 9, 2024 by alexis.dinno@pdx.edu
+  # perform Conover-Iman test of multiple comparisons using rank sums
 
 p.adjustment.methods <- c("none","bonferroni","sidak","holm","hs","hochberg","bh","by")
 

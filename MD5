@@ -1,6 +1,7 @@
-24c77edf07f7c13b8323ec1e146a9268 *DESCRIPTION
+eda50d9ef975428fb6f44c5bc03ff231 *DESCRIPTION
 609fc9eae1ef74623b3cfb591aeee6c8 *NAMESPACE
-d750b15f166bc1ecd3516daacc02fe81 *R/conover.test.R
+b38a1644e6e0b2bdec7513d2340b8dd0 *R/conover.test.R
+20c8d3f97d93e2e318a22508275b5a02 *build/partial.rdb
 d1ea6b6637e88fbc089cbc0f742b1518 *data/homecare.rda
-3a01967dd730b2d35b44cb345141f258 *man/conover.test.Rd
-852de9693a0fb20d5e553c7c8bb3b69a *man/homecare.Rd
+dc88ecb2b87e9d4a4d22ab8b633d60e2 *man/conover.test.Rd
+dfbecd34610254733ec464d265825aa5 *man/homecare.Rd

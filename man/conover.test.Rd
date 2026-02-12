@@ -8,8 +8,19 @@
 \title{Conover-Iman Test}
 \description{Performs the Conover-Iman test of multiple comparisons using rank sums}
 \usage{
-conover.test  (x, g=NA, method=p.adjustment.methods, kw=TRUE, label=TRUE, 
-      wrap=FALSE, table=TRUE, list=FALSE, rmc=FALSE, alpha=0.05, altp=FALSE)
+conover.test  (
+    x, 
+    g=NA, 
+    method=p.adjustment.methods, 
+    kw=TRUE, 
+    label=TRUE, 
+    wrap=FALSE, 
+    table=TRUE, 
+    list=FALSE, 
+    rmc=FALSE, 
+    alpha=0.05, 
+    altp=FALSE,
+    interpret=TRUE)
 
 p.adjustment.methods
 # c("none", "bonferroni", "sidak", "holm", "hs", "hochberg", "bh", "by")
@@ -26,6 +37,7 @@ p.adjustment.methods
  \item{rmc}{if \option{TRUE} then the reported test statistics and table are based on row minus column, rather than the default column minus row (i.e. the signs of the test statistic are flipped).}
  \item{alpha}{the nominal level of significance used in the step-up/step-down multiple comparisons procedures (Holm, Holm-\enc{Šidák}{Sidak}, Hochberg, Benjamini-Hochberg, and Benjamini-Yekutieli).}
  \item{altp}{if \option{TRUE} then express \emph{p}-values in alternative format.  The default is to express \emph{p}-value = P(\emph{T} \eqn{\ge} |\emph{t}|), and reject Ho if \emph{p} \eqn{\le} \eqn{\alpha}/2.  When the \code{altp} option is used, \emph{p}-values are instead expressed as \emph{p}-value = P(|\emph{T}| \eqn{\ge} |\emph{t}|), and reject Ho if \emph{p} \eqn{\le} \eqn{\alpha}.  \strong{These two expressions give identical test results.} Use of \code{altp} is therefore merely a semantic choice.}
+ \item{interpret}{output information about interpreting \emph{p}-values in light of raw significance level, \acronym{FWER}, or \acronym{FDR}.}
 }
 \details{\code{conover.test} computes the Conover-Iman test (Conover and Iman, 1979; Conover, 1999) for 0th-order stochastic dominance and reports the results among multiple pairwise comparisons after a Kruskal-Wallis omnibus test for 0th-order stochastic dominance among \emph{k} groups (Kruskal and Wallis, 1952).  Pairwise comparison using the Conover-Iman test is valid if and only if the corresponding Kruskal-Wallis null hypothesis is rejected, but is strictly more powerful than Dunn's (1964) \emph{post hoc} multiple comparisons test.  \code{conover.test} makes \emph{m} = \emph{k}(\emph{k}-1)/2 multiple pairwise comparisons based on the Conover-Iman \emph{t}-test-statistic for the rank-sum differences.  The null hypothesis for each pairwise comparison is that the probability of observing a randomly selected value from the first group that is larger than a randomly selected value from the second group equals one half; this null hypothesis corresponds to that of the Wilcoxon-Mann-Whitney rank-sum test.  Like the rank-sum test, if the data can be assumed to be continuous, and the distributions are assumed identical except for a difference in location, the Conover-Iman test may be understood as a test for median difference and for mean difference.  \code{conover.test} accounts for tied ranks.
 

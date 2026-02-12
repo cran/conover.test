@@ -2,5 +2,5 @@
 importFrom("stats", "pchisq", "pt")
 importFrom("utils", "data", "tail")
 
-# # Export all names
-exportPattern(".")
+# Export only these specific names (do not export helper functions)
+export("conover.test")

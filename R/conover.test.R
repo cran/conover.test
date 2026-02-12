@@ -1,15 +1,27 @@
-  # version 1.1.6 April 9, 2024 by alexis.dinno@pdx.edu
+  # version 1.1.7 February 11, 2026 by alexis.dinno@pdx.edu
   # perform Conover-Iman test of multiple comparisons using rank sums
 
-p.adjustment.methods <- c("none","bonferroni","sidak","holm","hs","hochberg","bh","by")
+p.adjustment.methods <- c("none", "bonferroni", "sidak", "holm", "hs", "hochberg", "bh", "by")
 
-conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label=TRUE, wrap=FALSE, table=TRUE, list=FALSE, rmc=FALSE, alpha=0.05, altp=FALSE) {
+conover.test <- function(
+    x=NA, 
+    g=NA, 
+    method=p.adjustment.methods, 
+    kw=TRUE, 
+    label=TRUE, 
+    wrap=FALSE, 
+    table=TRUE, 
+    list=FALSE, 
+    rmc=FALSE, 
+    alpha=0.05, 
+    altp=FALSE, 
+    interpret=TRUE) {
 
   # FUNCTIONS
 
   # kwallis.test: a custom Kruskal Wallis test function to support conover.test
   # Note: does not currently play nicely with missing values.
-  kwallis.test <- function(x=NA,g=NA,pass=0) {
+  kwallis.test <- function(x=NA, g=NA, pass=0) {
     # FUNCTIONS
     # tiedranks: enumerates tied values from a vector of ranks
     # ranks: a vector of rank values
@@ -21,8 +33,8 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
       for (i in 2:length(ranks)) {
         if (ranks[i-1] == ranks[i]) {
           if (length(ties) > 0) {
-            if (ranks[i-1] != tail(ties,n=1)) {
-              ties <- c(ties,ranks[i-1])
+            if (ranks[i-1] != tail(ties, n=1)) {
+              ties <- c(ties, ranks[i-1])
               }
             }
            else {
@@ -39,39 +51,39 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
       for (i in 1:length(x)) {
         N <- N + length(x[[i]])
         }
-      Data <- matrix(NA,N,4)
+      Data <- matrix(NA, N, 4)
       for (i in 1:N) {
-        Data[i,1] <- i
+        Data[i, 1] <- i
         }
       obs <- c()
       group <- c()
       for (i in 1:length(x)) {
-        obs <- c(obs,x[[i]])
-        group <- c(group,rep(i,length(x[[i]])))
+        obs <- c(obs, x[[i]])
+        group <- c(group, rep(i, length(x[[i]])))
         }
-      Data[,2] <- obs
+      Data[, 2] <- obs
       if (length(g) > 1) {
-        Data[,3] <- g
+        Data[, 3] <- g
         }
        else {
-        Data[,3] <- group        
+        Data[, 3] <- group        
         }
-      Data[,4] <- rank(Data[,2], ties.method="average", na.last=NA)
+      Data[, 4] <- rank(Data[, 2], ties.method="average", na.last=NA)
       }
   
     #set up data by groups
     if (!is.list(x)) {
       N <- length(x)
-      Data <- matrix(NA,length(x),4)
-      Data[,1] <- 1:length(x)
-      Data[,2] <- x
-      Data[,3] <- g
-      Data[,4] <- rank(Data[,2], ties.method="average", na.last=NA)
+      Data <- matrix(NA, length(x), 4)
+      Data[, 1] <- 1:length(x)
+      Data[, 2] <- x
+      Data[, 3] <- g
+      Data[, 4] <- rank(Data[, 2], ties.method="average", na.last=NA)
       }
-    k <- length(unique(Data[,3]))
+    k <- length(unique(Data[, 3]))
   
     #calculate ties adjustment
-    ranks <- Data[,4]
+    ranks <- Data[, 4]
     ranks <- ranks[!is.na(ranks)]
     ties <- tiedranks(ranks)
     r <- length(ties)
@@ -87,16 +99,16 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     #calculate H
     ranksum <- 0
     for (i in 1:k) {
-      ranksum <- ranksum + ((sum(Data[,4][Data[,3]==i]))^2)/(sum(Data[,3]==i))
+      ranksum <- ranksum + ((sum(Data[, 4][Data[, 3]==i]))^2)/(sum(Data[, 3]==i))
       }
     H  <- ((12/(N*(N+1)))*ranksum - 3*(N+1))/tiesadj
     df <- k-1
-    p  <- pchisq(H,k-1,lower.tail=FALSE)
+    p  <- pchisq(H, k-1, lower.tail=FALSE)
   
     #present output
-    output <- paste("Kruskal-Wallis chi-squared = ",round(H,digits=4),", df = ",df,", p-value = ",round(p,digits=2),"\n\n" ,sep="")
+    output <- paste("Kruskal-Wallis chi-squared = ", round(H, digits=4), ", df = ", df, ", p-value = ", round(p, digits=2), "\n" , sep="")
   
-    invisible(list(output=output,H=H,df=df,p=p,N=N,Data=Data,data.name=data))
+    invisible(list(output=output, H=H, df=df, p=p, N=N, Data=Data, data.name=data))
     }
 
   # all.integers robustly tests whether all elements of a vector are integers
@@ -118,7 +130,7 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     if (n == 0) {
       return("")
       }
-    return( paste0(rep(x=pad,times=n),collapse="") )
+    return( paste0(rep(x=pad, times=n), collapse="") )
     }
 
   # tformat: formats t values for display in table
@@ -131,60 +143,49 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
      else {
        sign <- " "
        }
-     leftspaces <- max(2,floor(log10(abs(t)))+2)
+     leftspaces <- max(2, floor(log10(abs(t)))+2)
      leftdigits <- floor(abs(t))
      rightspaces <- 8 - leftspaces
-     rightdigits <- substr(paste0(abs(t) - floor(abs(t)),"00000000"),3,rightspaces+2)
-     return(paste0(sign,leftdigits,".",rightdigits))
-    }
-
-  # pformat: formats p values for display in table
-  # p: a real p-value
-  # returns: a formatted string
-  pformat <- function(p) {
-     if (p == 1) {
-       return("1.0000")
-       }
-      else {
-       rightspaces <- 4
-       rightdigits <- substr(paste0(sprintf("%1.4f",p),"000000000"),3,rightspaces+2)
-       return(paste0("0.",rightdigits))
-       }
+     rightdigits <- substr(paste0(abs(t) - floor(abs(t)), "00000000"), 3, rightspaces+2)
+     return(paste0(sign, leftdigits, ".", rightdigits))
     }
 
   # centertext: centers a string within a specific width
-  centertext <- function(text,width=80,lmargin=2,rmargin=2) {
+  centertext <- function(text, width=80, lmargin=2, rmargin=2) {
     textwidth <- nchar(text)
     if (textwidth <= width-lmargin-rmargin) {
-      text <- substr(text,1,width-lmargin-rmargin)
+      text <- substr(text, 1, width-lmargin-rmargin)
       }
     buff <- (width-lmargin-rmargin-textwidth)
     if (buff%%2 == 0) {
-      return(paste(paste(rep(" ",buff/2),collapse=""),text,paste(rep(" ",buff/2),collapse=""),"\n",collapse=""))
+      return(paste(paste(rep(" ", buff/2), collapse=""), text, paste(rep(" ", buff/2), collapse=""), collapse=""))
       }
      else {
-      return(paste(paste(rep(" ",1+(buff-1)/2),collapse=""),text,paste(rep(" ",(buff-1)/2),collapse=""),"\n",collapse=""))
+      return(paste(paste(rep(" ", 1+(buff-1)/2), collapse=""), text, paste(rep(" ", (buff-1)/2), collapse=""), collapse=""))
       }
     }
 
   # conovertestheader: displays the Conover-Iman test table headers.
-  conovertestheader <- function(groupvar,colstart,colstop,rmc) {
+  conovertestheader <- function(groupvar, colstart, colstop, rmc) {
     if (rmc==FALSE) {
-      cat("Col Mean-|\nRow Mean |")
+      rlang::inform(message="Col Mean-\U2502")
+      RMCM_head <- "Row Mean \U2502"
       }
      else {
-      cat("Row Mean-|\nCol Mean |")
+      rlang::inform(message="Row Mean-\U2502")
+      RMCM_head <- "Col Mean \U2502"
       }
     groupvalues  <- levels(factor(groupvar))
+    RMCM_tail <- ""
     for (col in colstart:colstop) {
-      vallab  <- substr(groupvalues[col],1,8)
+      vallab  <- substr(groupvalues[col], 1, 8)
       pad     <- 8-nchar(vallab)
-      colhead <- paste0(tpad(n=pad),vallab)
-      cat(paste0("   ",substr(colhead,1,8)),sep="")
+      colhead <- paste0(tpad(n=pad), vallab)
+      RMCM_tail <- paste0(RMCM_tail, "   ", substr(colhead, 1, 8), sep="")
       }
-    cat("\n")  
+    rlang::inform(message=paste0(RMCM_head, RMCM_tail, sep=""))  
     separatorlength = 10 + 11*(colstop-colstart)+1
-    cat(tpad(n=9,pad="-"),"+",tpad(n=separatorlength,pad="-"),"\n",sep="")
+    rlang::inform(message=paste0(tpad(n=9, pad="\U2500"), "\U253C", tpad(n=separatorlength, pad="\U2500"), sep=""))
     }
 
   # conovertestttable displays the Conover-Iman test t values
@@ -192,39 +193,41 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     groupvalues  <- levels(factor(groupvar))
 
     # Row headers
-    vallab  <- substr(groupvalues[index],1,8)
+    vallab  <- substr(groupvalues[index], 1, 8)
     pad     <- 8-nchar(vallab)
-    rowhead <- paste0(tpad(n=pad),vallab)
-    cat(paste0(rowhead," |"))
+    rowhead <- paste0(tpad(n=pad), vallab)
+    t_row_head <- paste0(rowhead, " \U2502")
 
     # Table t entries
+    t_row_tail <- ""
     for (i in colstart:colstop) {
       t <- Tvalues[(((index-2)*(index-1))/2) + i]
-      cat(paste0("  ",tformat(t)))
+      t_row_tail <- paste0(t_row_tail, "  ", tformat(t), sep="")
       }
-    cat("\n")
+    rlang::inform(message=paste0(t_row_head, t_row_tail, sep=""))
     }
 
   # conovertestptable: displays the Conover-Iman test p values
-  conovertestptable <- function(index, P, colstart, colstop, Reject,last) {
-    # Blank row header
-    cat("         |")
+  conovertestptable <- function(index, P, colstart, colstop, Reject, last) {
+    # p row header
+    p_row_head <- "         \U2502"
 
     # Table p entries
+    p_row_tail = c(" ")
     for (i in colstart:colstop) {
       p <- P[(((index-2)*(index-1))/2) + i]
       if ( Reject[(((index-2)*(index-1))/2) + i] == 0) {
-        cat(paste0("     ",pformat(p)),sep="")
+        p_row_tail <- paste0(p_row_tail, "    ", sprintf("%1.4f", p), " ", sep="")
         }
        else {
-        cat(paste0("    ",pformat(p)),"*",sep="")
+        p_row_tail <- paste0(p_row_tail, "    ", sprintf("%1.4f", p), "*", sep="")
         }
       }
-    cat("\n")
+    rlang::inform(message=paste0(p_row_head, p_row_tail, sep=""))
 
     # Close out with another blank row header
     if (last == 0) {
-      cat("         |\n") 
+      rlang::inform(message="         \U2502") 
       }
     }
     
@@ -256,17 +259,17 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
      else {
       glevels <- names(table(addNA(g, ifany = TRUE)))
       }
-    Data <- data.frame(x,g)[order(levels(g)[c(g)]),]
-    Data <- Data[!is.na(unlist(Data$x)),]
-    Data <- Data[!is.na(Data$g),]
-    x <- Data[,1]
+    Data <- data.frame(x, g)[order(levels(g)[c(g)]), ]
+    Data <- Data[!is.na(unlist(Data$x)), ]
+    Data <- Data[!is.na(Data$g), ]
+    x <- Data[, 1]
 	g <- alphabetize.factor(Data$g)
     }
    else {
      g <- c()
      for (i in 1:length(x)) {
        for (j in 1:length(x[[i]])) {
-         g <- c(g,i)
+         g <- c(g, i)
          }
        }
     x <- as.numeric(unlist(x)[!is.na(unlist(x))])
@@ -277,7 +280,7 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     }
     
   if (tolower(method) != "none" & tolower(method) != "bonferroni" & tolower(method) != "sidak" & tolower(method) != "holm" & tolower(method) != "hs" & tolower(method) != "hochberg" & tolower(method) != "bh" & tolower(method) != "by") {
-    stop("method must be one of: none, bonferroni, sidak, hs, bh, or by")
+    rlang::abort(message="method must be one of: none, bonferroni, sidak, hs, bh, or by")
     }
 
   if (tolower(method)=="none") {
@@ -307,30 +310,30 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
 
   # validate that x is longer than 1
   if (length(unlist(x))==1) {
-    stop("too few observations in x.")
+    rlang::abort(message="too few observations in x.")
     }
   # validate that x is a numeric vector of data values, or a list of numeric 
   # data vectors, and is not NA
   if (TRUE %in% is.na(unlist(x)) | !is.vector(unlist(x), mode="numeric") ) {
-    stop("x must contain a numeric vector of data values, or a list of numeric data vectors.")
+    rlang::abort(message="x must contain a numeric vector of data values, or a list of numeric data vectors.")
     }
   # validate that g is not missing if x is a vector
   if (!xaslist & TRUE %in% is.na(g) ) {
-    stop("when specifying x as a vector, you must include g.")
+    rlang::abort(message="when specifying x as a vector, you must include g.")
     }
   # validate that g is not NA
   if (length(g) > 1 & TRUE %in% is.na(g)) {
-    stop("g must have no missing values.")
+    rlang::abort(message="g must have no missing values.")
     }
   # validate that g is factor or vector.
   if (length(g) > 1 & ( !is.factor(g) & !is.vector(g) ) ) {
     
-    stop("g must be a factor, character vector, or integer vector.")
+    rlang::abort(message="g must be a factor, character vector, or integer vector.")
     }
   # validate that g is a vector of mode = character or mode = integer.
   if (length(g) > 1 & is.vector(g) ) {
     if ( !is.vector(g, mode="character") & !all.integers(g) ) {
-      stop("g must be a factor, character vector, or integer vector.")
+      rlang::abort(message="g must be a factor, character vector, or integer vector.")
       }
     }
 
@@ -347,20 +350,20 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     }
 
   if (kw==TRUE) {
-    cat("  Kruskal-Wallis rank sum test\n\ndata: ",xname," and ",gname,"\n",sep="")
-    cat(out$output)
+    rlang::inform(message=paste0("  Kruskal-Wallis rank sum test\n\ndata: ", xname, " and ", gname, sep=""))
+    rlang::inform(message=out$output)
     }
     chi2    <- out$H
     k       <- out$df + 1
     N       <- out$N
     Data    <- out$Data
     m       <- k*(k-1)/2
-    Tvalues <- rep(0,m)
-    P       <- rep(0,m)
+    Tvalues <- rep(0, m)
+    P       <- rep(0, m)
     nu      <- N - k
 
     # calculate pooled variance to be used in generating t statistics
-    ranks   <- Data[,4]
+    ranks   <- Data[, 4]
     varA  <- 1/(N-1)
     varB  <- 0
     for (i in 1:N) {
@@ -372,10 +375,10 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
     # Calculate t test statistics
     for (i in 2:k) {
       for (j in 1:(i-1)) {
-        ni <- sum(Data[,3]==i)
-        nj <- sum(Data[,3]==j)
-        meanranki <- mean(Data[,4][Data[,3]==i])
-        meanrankj <- mean(Data[,4][Data[,3]==j])
+        ni <- sum(Data[, 3]==i)
+        nj <- sum(Data[, 3]==j)
+        meanranki <- mean(Data[, 4][Data[, 3]==i])
+        meanrankj <- mean(Data[, 4][Data[, 3]==j])
         if (rmc == FALSE) {
           t <- (meanrankj-meanranki)/(sqrt(S2*((N-1-chi2)/(N-k)))*sqrt(1/nj + 1/ni))
           }
@@ -398,7 +401,7 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
    	}
   
   #calculate adjusted p-values based on method argument
-  Reject <- rep(0,m)
+  Reject <- rep(0, m)
   # No adjustment for multiple comparisons
   if (tolower(c(method))=="none") {
     P.adjust <- P
@@ -414,7 +417,7 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
 
   # Control FWER using (Dunn's) Bonferroni
   if (tolower(c(method))=="bonferroni") {
-    P.adjust <- pmin(1,P*m)
+    P.adjust <- pmin(1, P*m)
     # If p = P(T >= |t|)
     if (altp==FALSE) {
       Reject <- P.adjust <= alpha/2
@@ -427,7 +430,7 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
 
   # Control FWER using Šidák
   if (tolower(c(method))=="sidak") {
-    P.adjust <- pmin(1,1 - (1-P)^m)
+    P.adjust <- pmin(1, 1 - (1-P)^m)
     # If p = P(T >= |t|)
     if (altp==FALSE) {
       Reject <- P.adjust <= alpha/2
@@ -440,170 +443,170 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
 
   # Control FWER using Holm(-Bonferroni)
   if (tolower(c(method))=="holm") {
-    Psort <- matrix(c(P,1:m,rep(0,m)),3,m,byrow=TRUE)
-    Psort <- Psort[,order(Psort[1,])]
+    Psort <- matrix(c(P, 1:m, rep(0, m)), 3, m, byrow=TRUE)
+    Psort <- Psort[, order(Psort[1, ])]
     for (i in 1:m) {
       adjust <- m+1-i
-      Psort[1,i] <- pmin(1,Psort[1,i]*adjust)
+      Psort[1, i] <- pmin(1, Psort[1, i]*adjust)
       # If p = P(T >= |t|)
       if (altp==FALSE) {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha/2
+          Psort[3, i] <- Psort[1, i] <= alpha/2
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha/2) & Psort[3,i-1] != 0)
+          Psort[3, i] <- ((Psort[1, i] <= alpha/2) & Psort[3, i-1] != 0)
           }
         }
        # Otherwise, if p = P(|T| >= |t|)
        else {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha
+          Psort[3, i] <- Psort[1, i] <= alpha
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha) & Psort[3,i-1] != 0)
+          Psort[3, i] <- ((Psort[1, i] <= alpha) & Psort[3, i-1] != 0)
           }
         }
       }
-    Psort <- Psort[,order(Psort[2,])]
-    P.adjust <- Psort[1,]
-    Reject <- Psort[3,]
+    Psort <- Psort[, order(Psort[2, ])]
+    P.adjust <- Psort[1, ]
+    Reject <- Psort[3, ]
     }
 
   # Control FWER using Holm-Šidák
   if (tolower(c(method))=="hs") {
-    Psort <- matrix(c(P,1:m,rep(0,m)),3,m,byrow=TRUE)
-    Psort <- Psort[,order(Psort[1,])]
+    Psort <- matrix(c(P, 1:m, rep(0, m)), 3, m, byrow=TRUE)
+    Psort <- Psort[, order(Psort[1, ])]
     for (i in 1:m) {
       adjust <- m+1-i
-      Psort[1,i] <- pmin(1,(1 - ((1 - Psort[1,i])^adjust)))
+      Psort[1, i] <- pmin(1, (1 - ((1 - Psort[1, i])^adjust)))
       # If p = P(T >= |t|)
       if (altp==FALSE) {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha/2
+          Psort[3, i] <- Psort[1, i] <= alpha/2
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha/2) & Psort[3,i-1] != 0)
+          Psort[3, i] <- ((Psort[1, i] <= alpha/2) & Psort[3, i-1] != 0)
           }
         }
        # Otherwise, if p = P(|T| >= |t|)
        else {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha
+          Psort[3, i] <- Psort[1, i] <= alpha
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha) & Psort[3,i-1] != 0)
+          Psort[3, i] <- ((Psort[1, i] <= alpha) & Psort[3, i-1] != 0)
           }
         }
       }
-    Psort <- Psort[,order(Psort[2,])]
-    P.adjust <- Psort[1,]
-    Reject <- Psort[3,]
+    Psort <- Psort[, order(Psort[2, ])]
+    P.adjust <- Psort[1, ]
+    Reject <- Psort[3, ]
     }
 
   # Control FWER using Hochberg
   if (tolower(c(method))=="hochberg") {
-    Psort <- matrix(c(P,1:m,rep(0,m)),3,m,byrow=TRUE)
-    Psort <- Psort[,order(Psort[1,], decreasing=TRUE)]
+    Psort <- matrix(c(P, 1:m, rep(0, m)), 3, m, byrow=TRUE)
+    Psort <- Psort[, order(Psort[1, ], decreasing=TRUE)]
     for (i in 1:m) {
       adjust <- i
-      Psort[1,i] <- min(1,Psort[1,i]*adjust)
+      Psort[1, i] <- min(1, Psort[1, i]*adjust)
       # If p = P(T >= |t|)
       if (altp==FALSE) {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha/2
+          Psort[3, i] <- Psort[1, i] <= alpha/2
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
+          Psort[3, i] <- ((Psort[1, i] <= alpha/2) | Psort[3, i-1] == 1)
           }
         }
        # Otherwise, if p = P(|T| >= |t|)
        else {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha
+          Psort[3, i] <- Psort[1, i] <= alpha
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha) | Psort[3,i-1] == 1)
+          Psort[3, i] <- ((Psort[1, i] <= alpha) | Psort[3, i-1] == 1)
           }
         }
       }
-    Psort <- Psort[,order(Psort[2,])]
-    P.adjust <- Psort[1,]
-    Reject <- Psort[3,]
+    Psort <- Psort[, order(Psort[2, ])]
+    P.adjust <- Psort[1, ]
+    Reject <- Psort[3, ]
     }
 
   # Control FDR using Benjamini-Hochberg
   if (tolower(c(method))=="bh") {
-    Psort <- matrix(c(P,1:m,rep(0,m)),3,m,byrow=TRUE)
-    Psort <- Psort[,order(Psort[1,], decreasing=TRUE)]
+    Psort <- matrix(c(P, 1:m, rep(0, m)), 3, m, byrow=TRUE)
+    Psort <- Psort[, order(Psort[1, ], decreasing=TRUE)]
     for (i in 1:m) {
       adjust <- (m/(m+1-i))
-      Psort[1,i] <- min(1,Psort[1,i]*adjust)
+      Psort[1, i] <- min(1, Psort[1, i]*adjust)
       # If p = P(T >= |t|)
       if (altp==FALSE) {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha/2
+          Psort[3, i] <- Psort[1, i] <= alpha/2
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
+          Psort[3, i] <- ((Psort[1, i] <= alpha/2) | Psort[3, i-1] == 1)
           }
         }
        # Otherwise, if p = P(|T| >= |t|)
        else {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha
+          Psort[3, i] <- Psort[1, i] <= alpha
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha) | Psort[3,i-1] == 1)
+          Psort[3, i] <- ((Psort[1, i] <= alpha) | Psort[3, i-1] == 1)
           }
         }
       }
-    Psort <- Psort[,order(Psort[2,])]
-    P.adjust <- Psort[1,]
-    Reject <- Psort[3,]
+    Psort <- Psort[, order(Psort[2, ])]
+    P.adjust <- Psort[1, ]
+    Reject <- Psort[3, ]
     }
 
   # Control FDR using Benjamini-Yekuteili
   if (tolower(c(method))=="by") {
-    Psort <- matrix(c(P,1:m,rep(0,m)),3,m,byrow=TRUE)
-    Psort <- Psort[,order(Psort[1,], decreasing=TRUE)]
+    Psort <- matrix(c(P, 1:m, rep(0, m)), 3, m, byrow=TRUE)
+    Psort <- Psort[, order(Psort[1, ], decreasing=TRUE)]
     for (i in 1:m) {
       adjust <- (m/(m+1-i))*sum(1/(1:m))
-      Psort[1,i] <- min(1,Psort[1,i]*adjust)
+      Psort[1, i] <- min(1, Psort[1, i]*adjust)
       # If p = P(T >= |t|)
       if (altp==FALSE) {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha/2 # reverse sorted, so m-i+1, rather than i
+          Psort[3, i] <- Psort[1, i] <= alpha/2 # reverse sorted, so m-i+1, rather than i
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha/2) | Psort[3,i-1] == 1)
+          Psort[3, i] <- ((Psort[1, i] <= alpha/2) | Psort[3, i-1] == 1)
           }
         }
        # Otherwise, if p = P(|T| >= |t|)
        else {
         if (i==1) {
-          Psort[3,i] <- Psort[1,i] <= alpha
+          Psort[3, i] <- Psort[1, i] <= alpha
           }
          else {
-          Psort[3,i] <- ((Psort[1,i] <= alpha) | Psort[3,i-1] == 1)
+          Psort[3, i] <- ((Psort[1, i] <= alpha) | Psort[3, i-1] == 1)
           }
         }
       }
-    Psort <- Psort[,order(Psort[2,])]
-    P.adjust <- Psort[1,]
-    Reject <- Psort[3,]
+    Psort <- Psort[, order(Psort[2, ])]
+    P.adjust <- Psort[1, ]
+    Reject <- Psort[3, ]
     }
 
   # OUTPUT
-  cat("\n")
+  rlang::inform(message="")
   if (table==TRUE | list==TRUE) {
     if ((TRUE %in% is.na(g))) {
-      title <- paste("Comparison of ",xname," across ",k," groups",sep="")
+      title <- paste("Conover-Iman Comparison of ", xname, " across ", k, " groups", sep="")
       }
      else {
-      title <- paste("Comparison of ",xname," by ",gname,sep="")
+      title <- paste("Conover-Iman Comparison of ", xname, " by ", gname, sep="")
       }
-    cat(centertext(title))
-    cat(centertext(Name))
+    rlang::inform(message=centertext(title))
+    rlang::inform(message=paste0(centertext(Name), sep=""))
     }
 
   if (table==TRUE) {
@@ -624,31 +627,31 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
         for (rep in 1:reps) {
           colstart <- (6*rep)-5
           colstop  <- 6*rep
-          conovertestheader(g,colstart,colstop,rmc)
+          conovertestheader(g, colstart, colstop, rmc)
           # Table body
           for (i in (colstart+1):k) {
-            colstop <- min(i-1,6*rep)
-            conovertestttable(g,i,Tvalues,colstart,colstop)
+            colstop <- min(i-1, 6*rep)
+            conovertestttable(g, i, Tvalues, colstart, colstop)
             if (i < k) {
-              conovertestptable(i,P.adjust,colstart,colstop,Reject,0)
+              conovertestptable(i, P.adjust, colstart, colstop, Reject, 0)
               }
              else {
-              conovertestptable(i,P.adjust,colstart,colstop,Reject,1)
+              conovertestptable(i, P.adjust, colstart, colstop, Reject, 1)
               }
             }
           }
         # End of table
         if (laststart < k) {
-          conovertestheader(g,laststart,kminusone,rmc)
+          conovertestheader(g, laststart, kminusone, rmc)
           # Table body
           for (i in (laststart+1):k) {
           	colstop <- i-1
-            conovertestttable(g,i,Tvalues,laststart, colstop) 
+            conovertestttable(g, i, Tvalues, laststart, colstop) 
             if (i < k) {
-              conovertestptable(i,P.adjust,laststart, colstop,Reject,0)
+              conovertestptable(i, P.adjust, laststart, colstop, Reject, 0)
               }
              else {
-              conovertestptable(i,P.adjust,laststart, colstop,Reject,1)
+              conovertestptable(i, P.adjust, laststart, colstop, Reject, 1)
               }
             }
           }
@@ -656,16 +659,16 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
   
       # Replication loop for <=7 groups
       if (k <= 7) {
-        conovertestheader(g,1,kminusone,rmc)
+        conovertestheader(g, 1, kminusone, rmc)
         # Table body
         for (i in 2:k) {
           colstop <- i-1
-          conovertestttable(g,i,Tvalues,1,colstop) 
+          conovertestttable(g, i, Tvalues, 1, colstop) 
           if (i < k) {
-            conovertestptable(i,P.adjust,1,colstop,Reject,0)
+            conovertestptable(i, P.adjust, 1, colstop, Reject, 0)
             }
            else {
-            conovertestptable(i,P.adjust,1,colstop,Reject,1)
+            conovertestptable(i, P.adjust, 1, colstop, Reject, 1)
             }
           }
         }
@@ -673,97 +676,105 @@ conover.test <- function(x=NA, g=NA, method=p.adjustment.methods, kw=TRUE, label
   
     # Replication loop for >7 groups, with wrap
     if (wrap==TRUE) {
-      conovertestheader(g,1,kminusone,rmc)
+      conovertestheader(g, 1, kminusone, rmc)
       # Table body
       for (i in 2:k) {
         colstop <- i-1
-        conovertestttable(g,i,Tvalues,1,colstop) 
+        conovertestttable(g, i, Tvalues, 1, colstop) 
         if (i < k) {
-          conovertestptable(i,P.adjust,1,colstop,Reject,0)
+          conovertestptable(i, P.adjust, 1, colstop, Reject, 0)
           }
          else {
-          conovertestptable(i,P.adjust,1,colstop,Reject,1)
+          conovertestptable(i, P.adjust, 1, colstop, Reject, 1)
           }
         }
       }
       
-    cat("\n")
+    rlang::inform(message="")
     }
 
   # Output pairwise comparisons as a list if requested.
   if (list==TRUE) {
     groupvalues  <- levels(factor(g))
     # get the lengths of each group name (whether explicitly labeled or not)
-    lengths <- sort(unlist(lapply(groupvalues,nchar)))
+    lengths <- sort(unlist(lapply(groupvalues, nchar)))
     # stringlength will be the sum of the two largest values in lengths plus 6
     stringlength <- lengths[length(lengths)] + lengths[length(lengths)-1] + 6
 
     # Output list header
     if (tolower(method)=="none") {
-      cat("\nList of pairwise comparisons: t statistic (p-value)\n")
+      rlang::inform(message="List of pairwise comparisons: T statistic (p-value)")
       }
      else {
-      cat("\nList of pairwise comparisons: t statistic (adjusted p-value)\n")
+      rlang::inform(message="List of pairwise comparisons: T statistic (adjusted p-value)")
       }
-    cat(paste0(rep("-",stringlength+18+max(Reject)),collapse=""))
-    cat("\n")
+    list_head_length <- max(nchar(groupvalues)) + tail(sort(nchar(unique(groupvalues))), n=2)[1] + 4
+    rlang::inform(message=paste0(paste0(rep("\U2500", list_head_length), collapse=""), "\U252C", paste0(rep("\U2500", 19+max(Reject)), collapse=""), collapse="", sep=""))
     index <- 0
     for (i in 2:k) {
       for (j in 1:(i-1)) {
         index <- index + 1
-          buffer <- max(stringlength - (nchar(groupvalues[i]) + nchar(groupvalues[j]) + 4) - 2,0)
+          buffer <- max(stringlength - (nchar(groupvalues[i]) + nchar(groupvalues[j]) + 4) - 2, 0)
           if ( Reject[index] == 0) {
-            pformatted <- paste0("(",pformat(P.adjust[index]),")",sep="")
+            pformatted <- paste0("(", sprintf("%1.4f", P.adjust[index]), ")", sep="")
             }
            else {
-           	pformatted <- paste0("(",pformat(P.adjust[index]),")","*",sep="")
+           	pformatted <- paste0("(", sprintf("%1.4f", P.adjust[index]), ")", "*", sep="")
            	}
         if (rmc==FALSE) {
-          cat(groupvalues[j]," - ",groupvalues[i],paste(rep(" ",buffer))," : ",tformat(Tvalues[index]), " ",pformatted,"\n", sep="")
+          rlang::inform(message=paste0(groupvalues[j], " - ", groupvalues[i], paste0(rep(" ", buffer), collapse=""), " \U2502 ", tformat(Tvalues[index]), " ", pformatted, sep=""))
           }
         if (rmc==TRUE) {
-          cat(groupvalues[i]," - ",groupvalues[j],paste(rep(" ",buffer))," : ",tformat(Tvalues[index]), " ",pformatted,"\n", sep="")
+          rlang::inform(message=paste0(groupvalues[i], " - ", groupvalues[j], paste0(rep(" ", buffer), collapse=""), " \U2502 ", tformat(Tvalues[index]), " ", pformatted, sep=""))
           }
 
         }
       }
-    cat("\n")
+      if (interpret==TRUE) {
+        rlang::inform(message="")
+        }
     }
-
-  cat("alpha = ",alpha,"\n",sep="")
-  # If p = P(T <= |t|)
-  if (altp==FALSE) {
-    cat("Reject Ho if p <= alpha/2\n")
-    }
-   # Otherwise, if p = P(|T| <= |t|)
-   else {
-    cat("Reject Ho if p <= alpha\n")
+  symbol <- "\U03B1"
+  procedure <- ""
+  if (method == "holm" | method == "sidak" | method == "hs" | method == "hochberg") symbol <- "FWER" 
+  if (method == "bh" | method == "by") symbol <- "FDR"
+  if (method == "holm" | method == "hs" | method == "hochberg" | method == "bh" | method == "by") procedure <- " with stopping rule" 
+  if (interpret==TRUE) {
+    rlang::inform(message=paste0(symbol, " = ", alpha, sep=""))
+    # If p = P(T >= |t|)
+    if (altp==FALSE) {
+      rlang::inform(message=paste0("Reject Ho if p \U2264 ", symbol, "/2", procedure, ", where p = Pr(T \U2265 |t|)"))
+      }
+     # Otherwise, if p = P(|T| <= |t|)
+     else {
+      rlang::inform(message=paste0("Reject Ho if p \U2264 ", symbol, procedure, ", where p = Pr(|T| \U2265 |t|)"))
+      }
     }
 
   # Create comparisons variable for returned values (whether the list option
   # is TRUE or FALSE
-  comparisons <- rep(NA,(k*(k-1)/2))
+  comparisons <- rep(NA, (k*(k-1)/2))
   groupvalues  <- levels(factor(g))
   index <- 0
   for (i in 2:k) {
     for (j in 1:(i-1)) {
       index <- index + 1
       if (rmc==FALSE) {
-        comparisons[index] <- paste0(groupvalues[j]," - ",groupvalues[i])
+        comparisons[index] <- paste0(groupvalues[j], " - ", groupvalues[i])
         }
       if (rmc==TRUE) {
-        comparisons[index] <- paste0(groupvalues[i]," - ",groupvalues[j])
+        comparisons[index] <- paste0(groupvalues[i], " - ", groupvalues[j])
         }
       }
     }
    
   # If p = P(T <= |t|)
   if (altp==FALSE) {
-   invisible(list(chi2=chi2, T=Tvalues, P=P, P.adjusted=P.adjust, comparisons=comparisons))
-   }
+    invisible(list(chi2=chi2, T=Tvalues, P=P, P.adjusted=P.adjust, comparisons=comparisons))
+    }
    # Otherwise, if p = P(|T| <= |t|)
    else {
-   invisible(list(chi2=chi2, T=Tvalues, altP=P, altP.adjusted=P.adjust, comparisons=comparisons))
-   }
+    invisible(list(chi2=chi2, T=Tvalues, altP=P, altP.adjusted=P.adjust, comparisons=comparisons))
+    }
   
   }

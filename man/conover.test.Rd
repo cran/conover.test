@@ -9,18 +9,19 @@
 \description{Performs the Conover-Iman test of multiple comparisons using rank sums}
 \usage{
 conover.test  (
-    x, 
-    g=NA, 
-    method=p.adjustment.methods, 
-    kw=TRUE, 
-    label=TRUE, 
-    wrap=FALSE, 
-    table=TRUE, 
-    list=FALSE, 
-    rmc=FALSE, 
-    alpha=0.05, 
-    altp=FALSE,
-    interpret=TRUE)
+      x, 
+      g=NA,
+      method=p.adjustment.methods, 
+      kw=TRUE, 
+      label=TRUE, 
+      wrap=FALSE, 
+      table=TRUE, 
+      list=FALSE, 
+      rmc=FALSE, 
+      alpha=0.05, 
+      altp=FALSE,
+      interpret=TRUE, 
+      single.contrast=NA)
 
 p.adjustment.methods
 # c("none", "bonferroni", "sidak", "holm", "hs", "hochberg", "bh", "by")
@@ -38,8 +39,9 @@ p.adjustment.methods
  \item{alpha}{the nominal level of significance used in the step-up/step-down multiple comparisons procedures (Holm, Holm-\enc{Šidák}{Sidak}, Hochberg, Benjamini-Hochberg, and Benjamini-Yekutieli).}
  \item{altp}{if \option{TRUE} then express \emph{p}-values in alternative format.  The default is to express \emph{p}-value = P(\emph{T} \eqn{\ge} |\emph{t}|), and reject Ho if \emph{p} \eqn{\le} \eqn{\alpha}/2.  When the \code{altp} option is used, \emph{p}-values are instead expressed as \emph{p}-value = P(|\emph{T}| \eqn{\ge} |\emph{t}|), and reject Ho if \emph{p} \eqn{\le} \eqn{\alpha}.  \strong{These two expressions give identical test results.} Use of \code{altp} is therefore merely a semantic choice.}
  \item{interpret}{output information about interpreting \emph{p}-values in light of raw significance level, \acronym{FWER}, or \acronym{FDR}.}
+ \item{single.contrast}{if supplied inidcates a single group that will be contrasted in pairwise tests against each other group (i.e., instead of all possible pairwise comparisons between all groups).  It must take a single numeric value within \code{g}, a level within \code{g} if \code{g} is a factor, a string value within g, or numerically indicate which group within \code{x} will be the contrast if \code{g} is omitted.  \code{single.contrast} changes the adjusted p-values when \code{method} is a value other than \code{none} because the number of comparisons \eqn{m} now equals \eqn{k - 1}, instead of \eqn{m = k(k-1)/2}.  If \code{single.contrast} is specified, then the output will include only a list of comparisons (i.e. as per the \code{list} option), and the output table will be omitted.}
 }
-\details{\code{conover.test} computes the Conover-Iman test (Conover and Iman, 1979; Conover, 1999) for 0th-order stochastic dominance and reports the results among multiple pairwise comparisons after a Kruskal-Wallis omnibus test for 0th-order stochastic dominance among \emph{k} groups (Kruskal and Wallis, 1952).  Pairwise comparison using the Conover-Iman test is valid if and only if the corresponding Kruskal-Wallis null hypothesis is rejected, but is strictly more powerful than Dunn's (1964) \emph{post hoc} multiple comparisons test.  \code{conover.test} makes \emph{m} = \emph{k}(\emph{k}-1)/2 multiple pairwise comparisons based on the Conover-Iman \emph{t}-test-statistic for the rank-sum differences.  The null hypothesis for each pairwise comparison is that the probability of observing a randomly selected value from the first group that is larger than a randomly selected value from the second group equals one half; this null hypothesis corresponds to that of the Wilcoxon-Mann-Whitney rank-sum test.  Like the rank-sum test, if the data can be assumed to be continuous, and the distributions are assumed identical except for a difference in location, the Conover-Iman test may be understood as a test for median difference and for mean difference.  \code{conover.test} accounts for tied ranks.
+\details{\code{conover.test} computes the Conover-Iman test (Conover and Iman, 1979; Conover, 1999) for stochastic superiority and reports the results among multiple pairwise comparisons after a Kruskal-Wallis omnibus test for stochastic superiority among \emph{k} groups (Kruskal and Wallis, 1952).  Pairwise comparison using the Conover-Iman test is valid if and only if the corresponding Kruskal-Wallis null hypothesis is rejected, but is strictly more powerful than Dunn's (1964) \emph{post hoc} multiple comparisons test.  \code{conover.test} makes \emph{m} = \emph{k}(\emph{k}-1)/2 multiple pairwise comparisons based on the Conover-Iman \emph{t}-test-statistic for the rank-sum differences.  The null hypothesis for each pairwise comparison is that the probability of observing a randomly selected value from the first group that is larger than a randomly selected value from the second group equals one half; this null hypothesis corresponds to that of the Wilcoxon-Mann-Whitney rank-sum test.  \code{conover.test} accounts for tied ranks.
 
 \code{conover.test} outputs both \emph{z}-test-statistics for each pairwise comparison and the \emph{p}-value = P(\emph{T} \eqn{\ge} |\emph{t}|) for each. Reject Ho based on \emph{p} \eqn{\le} \eqn{\alpha}/2 (and in combination with \emph{p}-value ordering for stepwise \code{method} options).  If you prefer to work with \emph{p}-values expressed as \emph{p}-value = P(|\emph{T}| \eqn{\ge} |\emph{t}|) use the \code{altp=TRUE} option, and reject Ho based on \emph{p} \eqn{\le} \eqn{\alpha} (and in combination with \emph{p}-value ordering for stepwise \code{method} options).  These are exactly equivalent rejection decisions.
 
@@ -99,6 +101,13 @@ Please contact me with any questions, bug reports or suggestions for improvement
 [2] \tab a copy of the command syntax used, and\cr
 [3] \tab a copy of the exact output of the command.\cr
 }
+
+\subsection{Suggested citation}{
+Dinno, A. (2026) \code{conover.test} version 1.2.0: Conover-Iman test of multiple comparisons using rank sums. R software package. URL: \url{https://cran.r-project.org/package=conover.test}.}
+
+\subsection{See also}{
+\code{conover.test} is also available for Stata as \href{https://alexisdinno.com/stata/conovertest.html}{conovertest}.
+}
 }
 \references{
 Benjamini, Y. and Hochberg, Y.  (1995)  Controlling the false discovery rate: A practical and powerful approach to multiple testing. \emph{Journal of the Royal Statistical Society.  Series B (Methodological)}.  \bold{57}, 289--300.  <\doi{10.1111/j.2517-6161.1995.tb02031.x}>.
@@ -122,31 +131,46 @@ Kruskal, W.  H. and Wallis, A.  (1952)  Use of ranks in one-criterion variance a
 \enc{Šidák}{Sidak}, Z.  (1967)  Rectangular confidence regions for the means of multivariate normal distributions.  \emph{Journal of the American Statistical Association}.  \bold{62}, 626--633.  <\doi{10.1080/01621459.1967.10482935}>.
 }
 \examples{
-## Example cribbed and modified from the kruskal.test documentation
-## Hollander & Wolfe (1973), 116.  
-## Mucociliary efficiency from the rate of removal of dust in normal
-##  subjects, subjects with obstructive airway disease, and subjects
-##  with asbestosis.  
+# Example cribbed and modified from the kruskal.test documentation
+# Thomson, M.L. and Short, M.D. (1969). Mucociliary function in 
+#  health, chronic obstructive airway disease, and asbestosis.
+#  Journal of Applied Physiology 26(5):535–539.
+# Mucociliary efficiency from the rate of removal of dust in normal
+#  subjects, subjects with obstructive airway disease, and subjects
+#  with asbestosis.  
 x <- c(2.9, 3.0, 2.5, 2.6, 3.2) # normal subjects
 y <- c(3.8, 2.7, 4.0, 2.4)      # with obstructive airway disease
 z <- c(2.8, 3.4, 3.7, 2.2, 2.0) # with asbestosis
 conover.test(x=list(x,y,z))
 
+# Using factor g, omitting Kruskal-Wallis test and using Dunn's 
+# Bonferroni adjustment
 x <- c(x, y, z)
 g <- factor(rep(1:3, c(5, 4, 5)),
             labels = c("Normal",
                        "COPD",
                        "Asbestosis"))
-conover.test(x, g)
+conover.test(x, g, kw=FALSE, method="bonferroni")
 
-## Example based on home care data from Dunn (1964)
+# Example based on home care data from Dunn (1964)
 data(homecare)
-attach(homecare)
-conover.test(occupation, eligibility, method="hs", list=TRUE)
-detach(homecare)
+conover.test(
+ homecare$occupation, 
+  homecare$eligibility, 
+  method="bh", 
+  list=TRUE)
 
-## Air quality data set illustrates differences in different
-## multiple comparisons adjustments
+# Restricting the above example to only contrast a single group. Note
+# the difference in the adjusted p-value for Eligible vs Responsible 
+# person unable.
+conover.test(
+ homecare$occupation, 
+ homecare$eligibility, 
+ method="bh", 
+ single.contrast="Eligible")
+
+# Air quality data set illustrates differences in different
+# multiple comparisons adjustments
 attach(airquality)
 conover.test(Ozone, Month, kw=FALSE, method="bonferroni")
 conover.test(Ozone, Month, kw=FALSE, method="hs")

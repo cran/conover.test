@@ -1,7 +1,7 @@
 # Perform Conover-Iman test of multiple comparisons using rank sums
-# Version: 1.2.0
+# Version: 1.2.1
 # Author: Alexis Dinno
-# Date: September 15, 2026
+# Date: October 04, 2026
 
 p.adjustment.methods <- c("none", "bonferroni", "sidak", "holm", "hs", "hochberg", "bh", "by")
 
@@ -173,7 +173,7 @@ conover.test <- function(
     }
   # validate that g is a vector of mode = character or mode = integer.
   if (length(g) > 1 & is.vector(g) ) {
-    if ( !is.vector(g, mode="character") & !all.integers(g) ) {
+    if ( !is.vector(g, mode="character") & !all_integers(g) ) {
       rlang::abort(message="g must be a factor, character vector, or integer vector.")
       }
     }

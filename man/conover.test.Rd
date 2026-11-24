@@ -106,7 +106,7 @@ Please contact me with any questions, bug reports or suggestions for improvement
 Dinno, A. (2026) \code{conover.test} version 1.2.0: Conover-Iman test of multiple comparisons using rank sums. R software package. URL: \url{https://cran.r-project.org/package=conover.test}.}
 
 \subsection{See also}{
-\code{conover.test} is also available for Stata as \href{https://alexisdinno.com/stata/conovertest.html}{conovertest}.
+\code{conover.test} is also available for Stata as \href{https://alexisdinno.com/stata/conovertest.shtml}{conovertest}.
 }
 }
 \references{

@@ -1,9 +1,9 @@
-d9b3f1a6c8a34d9e2698183eea37b61d *DESCRIPTION
+c1ee4dfc6f4ff6142745885f1bc767ff *DESCRIPTION
 4d0828a3d4101f0d2d1c25f726965c12 *NAMESPACE
 fbcf42fa65ddcf750e3b745ed14a562f *R/all_integers.R
 b91d661b4ac78c32e39fb3f2726a1b3f *R/alphabetize.factor.R
 0061a350896b10c5f438ef1c21c349d7 *R/centertext.R
-cf383cd78c0af6e510c8226d0861b14b *R/conover.test.R
+b9704900863181e6400112edf416f21a *R/conover.test.R
 6c55567f39ebd1cad0ef3402e3a23161 *R/conovertestheader.R
 bffa977f5475d558f2c7b606ac7d312a *R/conovertestptable.R
 9b1c83e23f6839fd2aaf48b0624c52de *R/conovertestttable.R
@@ -16,7 +16,7 @@ c7c32ca1ce009801c91fe3f3cd19d3d1 *R/pad.left.R
 a83622eafe7244ebd863d20f273488e2 *R/tformat.R
 47950a93f1e485035134bd00d7266df7 *R/tiedranks.R
 1ee5a6c1140f30be4ee9a0efe32e9fa4 *R/tpad.R
-21c9401b8c07f38d762ade4612fc4ffe *build/partial.rdb
+29cf7d47d34a2b0e7ae0e2046f2d132b *build/partial.rdb
 d1ea6b6637e88fbc089cbc0f742b1518 *data/homecare.rda
-41038edcd5158cd746a3d0cf6be60ce4 *man/conover.test.Rd
+60e867db20e14ce96beee7b3e28e5f83 *man/conover.test.Rd
 dfbecd34610254733ec464d265825aa5 *man/homecare.Rd

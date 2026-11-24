@@ -1,6 +1,6 @@
 Package: conover.test
-Version: 1.2.1
-Date: 2026-10-04
+Version: 1.2.2
+Date: 2026-11-23
 Title: Conover-Iman Test of Multiple Comparisons Using Rank Sums
 Authors@R: c(person(given = "Alexis", family ="Dinno", role = c("aut", "cre", "cph"), email = "alexis.dinno@pdx.edu", comment = c(ORCID = "0000-0003-2560-310X")))
 Imports: rlang
@@ -9,9 +9,9 @@ License: GPL-2
 LazyData: true
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2026-10-04 22:27:54 UTC; alexis
+Packaged: 2026-11-24 00:33:39 UTC; alexis
 Author: Alexis Dinno [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0003-2560-310X>)
 Maintainer: Alexis Dinno <alexis.dinno@pdx.edu>
 Repository: CRAN
-Date/Publication: 2026-10-04 22:50:02 UTC
+Date/Publication: 2026-11-24 17:30:02 UTC
